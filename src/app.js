@@ -62,24 +62,23 @@ app.get("/poll", async (req, res) => {
 
 app.post("/choice", async (req, res) => {
 
-    const schemaPoll = Joi.object({
-        title: Joi.string().required(),
-        pollId: Joi.string().required()
-    })
-
     const { title, pollId } = req.body;
-    const choice = { title, pollId }
     
-    const validation = schemaPoll.validate(choice, { abortEarly: false });
-
-    if (validation.error) {
-        const errors = validation.error.details.map((detail) => detail.message);
-        return res.status(422).send(errors);
-    }
-
     try {
+        const checkPoll = await db.collection("polls").findOne({ _id: new ObjectId(pollId) });
+        const checkTitle = await db.collection("choices").findOne({ title, pollId });
+        if (checkPoll == null) {
+            return res.sendStatus(404)
+        } else if (title == '') {
+            return res.sendStatus(422)
+        } else if (checkTitle){
+            return res.sendStatus(409)
+        }
+        
+        
         await db.collection("choices").insertOne({ title, pollId });
         res.sendStatus(201);
+
     } catch (err) {
         res.status(500).send(err.message)
     }
