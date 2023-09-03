@@ -3,6 +3,7 @@ import cors from "cors";
 import dayjs from "dayjs";
 import { db } from "./database/database.connection.js";
 import Joi from "joi";
+import { ObjectId } from "mongodb";
 
 const app = express();
 
@@ -82,6 +83,20 @@ app.post("/choice", async (req, res) => {
     } catch (err) {
         res.status(500).send(err.message)
     }
+})
+
+app.get("/poll/:id/choice", async (req, res) => {
+    const id = req.params.id
+
+try {
+
+    const choices = await db.collection("choices").find({ pollId: id }).toArray();
+    res.send(choices);
+
+} catch (err) {
+    res.sendStatus(404)
+}
+    
 })
 
 const PORT = 5000;
