@@ -47,7 +47,7 @@ export async function postVote (req,res) {
         }
 
         await db.collection("votes").insertOne({ createdAt: dateFormated, choiceId: new ObjectId(choiceId) });
-        res.sendStatus(201)
+        Promise.all(res.sendStatus(201))
 
     } catch (err) {
         res.sendStatus(404)
