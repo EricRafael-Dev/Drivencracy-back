@@ -68,7 +68,7 @@ export async function getPollChoices (req, res) {
 
 export async function getResultPoll (req, res) {
     const pollId = req.params.id;
-    const listResult = []
+    let listResult = [];
     let moreVotes = null;
 
     function add(title, votes) {
